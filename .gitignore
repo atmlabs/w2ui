@@ -1,3 +1,4 @@
+.idea
 tmp/*
 node_modules/
 /npm-debug.log
@@ -15,3 +16,7 @@ dist/w2ui-*.tgz
 *.iws
 .DAV
 *~
+
+dist/w2ui*.js
+dist/w2ui*.css
+yarn.lock
