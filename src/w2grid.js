@@ -2616,6 +2616,10 @@ class w2grid extends w2base {
                     this.last.field = this.searches[tmp].field
                     this.last.label = this.searches[tmp].label
                 }
+                // @override if multiSearch but hide searchAll, still show multiSearch button after reset
+                if (this.multiSearch) {
+                    input.next().show()
+                }
             } else {
                 this.last.field = 'all'
                 this.last.label = 'All Fields'
@@ -2975,7 +2979,9 @@ class w2grid extends w2base {
                 if (data.records == null) {
                     data.records = []
                 }
-                if (data.records.length == this.limit) {
+                // @override allow unregular pagination
+                if (data.records.length >= this.limit) {
+                // if (data.records.length == this.limit) {
                     let loaded = this.records.length + data.records.length
                     this.last.fetch.hasMore = (loaded == this.total ? false : true)
                 } else {
@@ -4623,8 +4629,13 @@ class w2grid extends w2base {
             if (edata.isCancelled === true) return false
             clearExpanded(rec)
             let stops = []
-            for (let r = rec; r != null; r = this.get(r.w2ui.parent_recid))
+            for (let r = rec; r != null; r = this.get(r.w2ui.parent_recid)) {
                 stops.push(r.w2ui.parent_recid)
+                // @override fix bug infinite loop on collapse
+                if ('undefined' === typeof r.w2ui.parent_recid) {
+                    break;
+                }
+            }
             // stops contains 'undefined' plus the ID of all nodes in the path from 'rec' to the tree root
             let start = ind + 1
             let end   = start

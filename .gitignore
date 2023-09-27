@@ -20,3 +20,4 @@ dist/w2ui-*.tgz
 dist/w2ui*.js
 dist/w2ui*.css
 yarn.lock
+Makefile
