@@ -987,7 +987,7 @@ class w2toolbar extends w2base {
         let el   = query(this.box).find('#tb_'+ this.name + '_item_'+ w2utils.escapeId(id)).get(0)
         let item = this.get(id)
         let overlay = (typeof this.tooltip == 'string' ? { position: this.tooltip } : this.tooltip)
-        let txt  = item.tooltip
+        let txt  = w2utils.lang(item.tooltip)
         if (typeof txt == 'function') txt = txt.call(this, item)
         // not for opened drop downs
         if (['menu', 'menu-radio', 'menu-check', 'drop', 'color', 'text-color'].includes(item.type)
