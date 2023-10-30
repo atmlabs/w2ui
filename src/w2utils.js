@@ -2096,6 +2096,7 @@ class Utils {
     prepareParams(url, fetchOptions, defDataType) {
         let dataType = defDataType ?? w2utils.settings.dataType
         let postParams = fetchOptions.body
+        let decode = false
         switch (dataType) {
             case 'HTTPJSON':
                 postParams = { request: postParams }
@@ -2111,6 +2112,7 @@ class Utils {
                 body2params()
                 break
             case 'RESTFULL':
+                decode = true
                 if (['PUT', 'DELETE'].includes(fetchOptions.method)) {
                     fetchOptions.headers['Content-Type'] = 'application/json'
                 } else {
@@ -2128,6 +2130,12 @@ class Utils {
                 break
         }
         fetchOptions.body = typeof fetchOptions.body == 'string' ? fetchOptions.body : JSON.stringify(fetchOptions.body)
+
+        // override allow to keep raw params like ('order[x]=asc') if restfull
+        if (decode) {
+            url.search = decodeURI(url.search)
+        }
+
         return fetchOptions
 
         function body2params() {

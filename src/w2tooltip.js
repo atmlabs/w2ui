@@ -2046,6 +2046,12 @@ class MenuTooltip extends Tooltip {
             items = items({ overlay, index, parentIndex, event })
         }
         let item = items[index]
+
+        // @override keep Open if item has custom "keepOpen" option
+        if (item.keepOpen) {
+            keepOpen = true
+        }
+
         if (!item || (item.disabled && !query(event.target).hasClass('menu-remove'))) {
             return
         }

@@ -334,6 +334,9 @@ class w2grid extends w2base {
             'toggle'       : 'list'
         }
 
+        // override custom
+        this.searchLogics = ['AND', 'OR']
+
         // events
         this.onAdd               = null
         this.onEdit              = null
@@ -3250,7 +3253,9 @@ class w2grid extends w2base {
                         field="${col.field}" recid="${recid}" column="${column}" ${edit.attr}>
                     </div>${edit.text}`))
                 input = div.find('div.w2ui-input').get(0)
-                input.innerText = (typeof val != 'object' ? val : '')
+                // input.innerText = (typeof val != 'object' ? val : '')
+                // @override allow Payload to correctly be displayed when selecting cell
+                input.innerText = (typeof val != 'object' ? val : JSON.stringify(val))
                 if (value != null) {
                     w2utils.setCursorPosition(input, input.innerText.length)
                 } else {
@@ -3272,7 +3277,9 @@ class w2grid extends w2base {
                 if (edit.type == 'date') {
                     val = w2utils.formatDate(w2utils.isDate(val, edit.format, true) || new Date(), edit.format)
                 }
-                input.value = (typeof val != 'object' ? val : '')
+                // input.value = (typeof val != 'object' ? val : '')
+                // @override allow Payload to correctly be displayed when selecting cell
+                input.value = (typeof val != 'object' ? val : JSON.stringify(val))
 
                 // init w2field, attached to input._w2field
                 let doHide = (event) => {
@@ -6073,7 +6080,8 @@ class w2grid extends w2base {
             if (col.hideable === false) continue
             if (!text && this.columns[c].tooltip) text = this.columns[c].tooltip
             if (!text) text = '- column '+ (parseInt(c) + 1) +' -'
-            items.push({ id: col.field, text: w2utils.stripTags(text), checked: !col.hidden })
+            // @override add keepOpen option
+            items.push({ id: col.field, text: w2utils.stripTags(text), checked: !col.hidden, keepOpen: true })
         }
         let url = (typeof this.url != 'object' ? this.url : this.url.get)
         if ((url && this.show.skipRecords) || this.show.saveRestoreState) {
@@ -6993,13 +7001,20 @@ class w2grid extends w2base {
     }
 
     getSearchesHTML() {
+        // override some stuff here
         let html = `
             <div class="search-title">
                 ${w2utils.lang('Advanced Search')}
                 <span class="search-logic" style="${this.show.searchLogic ? '' : 'display: none'}">
+                    <label style="font-size: 11px;">${w2utils.lang('Search logic')}</label> 
                     <select id="grid_${this.name}_logic" class="w2ui-input">
-                        <option value="AND" ${this.last.logic == 'AND' ? 'selected' : ''}>${w2utils.lang('All')}</option>
-                        <option value="OR" ${this.last.logic == 'OR' ? 'selected' : ''}>${w2utils.lang('Any')}</option>
+                        ${this.searchLogics && -1 !== this.searchLogics.indexOf('AND') ?
+                        `<option value="AND" ${this.last.logic == 'AND' ? 'selected' : ''}>${w2utils.lang('All')}</option>`
+                        : ''}
+                        ${this.searchLogics && -1 !== this.searchLogics.indexOf('OR') ? 
+                            `<option value="OR" ${this.last.logic == 'OR' ? 'selected' : ''}>${w2utils.lang('Any')}</option>` :
+                            ''
+                        }
                     </select>
                 </span>
             </div>
