@@ -2090,7 +2090,8 @@ class w2grid extends w2base {
             last_field  = field
             last_search = value
             last_multi  = false
-            last_logic  = (hasHiddenSearches ? 'AND' : 'OR')
+            // @override don't reset las_logic
+            last_logic  = (hasHiddenSearches ? 'AND' : this.last.logic)
             // loop through all searches and see if it applies
             if (value != null) {
                 if (field.toLowerCase() == 'all') {
@@ -2412,7 +2413,7 @@ class w2grid extends w2base {
                 anchor: el,
                 align: 'both',
                 items: searches,
-                hideOn: ['doc-click', 'sleect', 'remove'],
+                hideOn: ['doc-click', 'select', 'remove'],
                 render(item) {
                     let ret = item.text
                     if (item.isDefault) ret = `<b>${ret}</b>`
@@ -2604,7 +2605,8 @@ class w2grid extends w2base {
         this.searchData = edata.detail.searchData
         this.searchSelected = null
         this.last.search = ''
-        this.last.logic = (hasHiddenSearches ? 'AND' : 'OR')
+        // @override do not reset search logic choice
+        // this.last.logic = (hasHiddenSearches ? 'AND' : 'OR')
         // --- do not reset to All Fields (I think)
         input.next().hide() // advanced search button
         if (this.searches.length > 0) {
@@ -5138,7 +5140,8 @@ class w2grid extends w2base {
             if (this.searches[s].field == this.last.field) this.last.label = this.searches[s].label
         }
         if (this.last.multi) {
-            sInput.attr('placeholder', '[' + w2utils.lang('Multiple Fields') + ']')
+            // @override don't want that
+            // sInput.attr('placeholder', '[' + w2utils.lang('Multiple Fields') + ']')
         } else {
             sInput.attr('placeholder', w2utils.lang('Search') + ' ' + w2utils.lang(this.last.label, true))
         }
@@ -6221,7 +6224,8 @@ class w2grid extends w2base {
 
             // if no move, then click event for sorting
             if (event.pageX == dragData.initialX && event.pageY == dragData.initialY) {
-                self.columnClick(self.columns[dragData.originalPos].field, event)
+                // @override fix double request, it seems the click is already called elsewhere
+                // self.columnClick(self.columns[dragData.originalPos].field, event)
                 finish()
                 return
             }
